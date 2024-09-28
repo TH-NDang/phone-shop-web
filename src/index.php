@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'config/config.php';
 require_once 'models/Product.php';
 
 $retries = 5;
@@ -36,13 +36,13 @@ switch ($action) {
         break;
     case 'about':
         // TODO: Create and include about page
-        echo "About page";
+        echo '<div id="content" class="container"><h1>About Us</h1><p>About page content goes here.</p></div>';
         break;
     case 'contact':
         // TODO: Create and include contact page
-        echo "Contact page";
+        echo '<div id="content" class="container"><h1>Contact Us</h1><p>Contact page content goes here.</p></div>';
         break;
     default:
-        echo "404 Not Found";
+        echo '<div id="content" class="container"><h1>404 Not Found</h1><p>The page you are looking for does not exist.</p></div>';
         break;
 }

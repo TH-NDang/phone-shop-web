@@ -5,90 +5,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Phone Shop - Home</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    header {
-      background-color: #333;
-      color: #fff;
-      padding: 10px 0;
-    }
-
-    nav ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-    }
-
-    nav ul li {
-      margin: 0 10px;
-    }
-
-    nav ul li a {
-      color: #fff;
-      text-decoration: none;
-    }
-
-    .hero {
-      background-color: #e44d26;
-      color: #fff;
-      text-align: center;
-      padding: 50px 0;
-      margin-bottom: 30px;
-    }
-
-    .hero h1 {
-      font-size: 36px;
-      margin-bottom: 20px;
-    }
-
-    .cta-button {
-      display: inline-block;
-      background-color: #fff;
-      color: #e44d26;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-  </style>
+  <link rel="stylesheet" href="./public/css/styles.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
-<body>
-  <header>
-    <nav>
-      <ul>
-        <li><a href="index.php">Home</a></li>
-        <li><a href="index.php?action=products">Products</a></li>
-        <li><a href="index.php?action=about">About</a></li>
-        <li><a href="index.php?action=contact">Contact</a></li>
-      </ul>
-    </nav>
-  </header>
-  <div class="hero">
+<body class="page">
+  <?php include 'header.php' ?>
+  <div id="content" class="container">
+    <div class="hero">
+      <div class="container">
+        <h1 class="hero__title">Welcome to Phone Shop</h1>
+        <p>Discover the latest smartphones and accessories</p>
+        <a class="hero__cta-button">Shop Now</a>
+      </div>
+    </div>
     <div class="container">
-      <h1>Welcome to Phone Shop</h1>
-      <p>Discover the latest smartphones and accessories</p>
-      <a href="index.php?action=products" class="cta-button">Shop Now</a>
+      <h2>Featured Products</h2>
+      <!-- Add featured products here -->
     </div>
   </div>
-  <div class="container">
-    <h2>Featured Products</h2>
-    <!-- Add featured products here -->
-  </div>
+  <?php include 'footer.php' ?>
+
+  <script>
+    $(function() {
+      var currentAction = window.location.search.split('action=')[1] || 'home';
+
+      $(".header__nav-link").click(function(e) {
+        e.preventDefault();
+        var action = $(this).data("action");
+
+        if (action !== currentAction) {
+          currentAction = action;
+
+          let replacePart = action === 'home' ? ".page" : "#content";
+          $(replacePart).load("index.php?action=" + action);
+          window.history.pushState(null, null, "index.php?action=" + action);
+        }
+      });
+
+      // Handle the initial page load
+      if (currentAction !== 'home') {
+        $(".page").load("index.php?action=" + currentAction);
+      }
+
+      // Handle browser back/forward buttons
+      window.onpopstate = function() {
+        var action = window.location.search.split('action=')[1] || 'home';
+        if (action !== currentAction) {
+          currentAction = action;
+          $("#content").load("index.php?action=" + action);
+        }
+      };
+    });
+  </script>
 </body>
 
 </html>

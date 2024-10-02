@@ -1,6 +1,6 @@
 <?php
-require_once 'config/config.php';
-require_once 'models/Product.php';
+require_once '../src/config/config.php';
+require_once '../src/models/Product.php';
 
 $retries = 5;
 $retry_interval = 2; // seconds
@@ -27,12 +27,12 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'home';
 
 switch ($action) {
     case 'home':
-        include 'views/home.php';
+        include '../src/views/home.php';
         break;
     case 'products':
         $productModel = new Product($pdo);
         $products = $productModel->getAll();
-        include 'views/products.php';
+        include '../src/views/products.php';
         break;
     case 'about':
         // TODO: Create and include about page

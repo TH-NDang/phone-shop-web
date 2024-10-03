@@ -15,7 +15,7 @@ $products = $productModel->getAll();
 
 foreach ($products as $product) {
     echo '<div class="product-card">';
-    echo '<img src="' . htmlspecialchars($product['image_url']) . '" alt="' . htmlspecialchars($product['name']) . '" class="product-card__image">';
+    echo '<img src="' . htmlspecialchars($product['image']) . '" alt="' . htmlspecialchars($product['name']) . '" class="product-card__image">';
     echo '<div class="product-card__info">';
     echo '<div class="product-card__name">' . htmlspecialchars($product['name']) . '</div>';
     echo '<div class="product-card__price">$' . number_format($product['price'], 2) . '</div>';

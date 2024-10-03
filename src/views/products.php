@@ -3,7 +3,7 @@
   <div class="product-grid">
     <?php foreach ($products as $product): ?>
       <div class="product-card">
-        <img src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-card__image">
+        <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-card__image">
         <div class="product-card__info">
           <div class="product-card__name"><?php echo htmlspecialchars($product['name']); ?></div>
           <div class="product-card__price">$<?php echo number_format($product['price'], 2); ?></div>

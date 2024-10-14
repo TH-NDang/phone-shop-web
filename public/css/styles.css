@@ -1,124 +1,222 @@
-/* Block: Page */
-.page {
-  font-family: Arial, sans-serif;
+* {
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  outline: none;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Block: Container */
-.container {
-  max-width: 1200px;
+body,
+html {
+  min-width: 1024px;
+
+}
+
+a {
+  text-decoration: none;
+  color: #222;
+}
+
+.clear {
+  clear: both;
+  line-height: 0;
+}
+
+/* căn giữa section, và set độ rộng lớn nhất là 1200px */
+section {
+  max-width: 1205px;
   margin: 0 auto;
-  padding: 20px;
 }
 
-/* Block: Header */
-.header {
-  background-color: #333;
-  color: #fff;
-  padding: 10px 0;
+hr {
+  color: #ddd;
+  background-color: #ddd;
+  border-top: 1px solid #ddd;
 }
 
-.header__nav {
+.flexContain {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
 }
 
-.header__nav-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
+/* Use for auto clear float */
+/* ====== https://css-tricks.com/snippets/css/clear-fix/ ======== */
+.group:before,
+.group:after {
+  content: "";
+  display: table;
 }
 
-.header__nav-item {
-  margin: 0 10px;
+.group:after {
+  clear: both;
 }
 
-.header__nav-link {
-  color: #fff;
-  text-decoration: none;
+.group {
+  zoom: 1;
+  /* For IE 6/7 (trigger hasLayout) */
 }
 
-/* Block: Hero */
-.hero {
-  background-color: #e44d26;
-  color: #fff;
-  text-align: center;
-  padding: 50px 0;
-  margin-bottom: 30px;
-}
-
-.hero__title {
-  font-size: 36px;
-  margin-bottom: 20px;
-}
-
-.hero__cta-button {
-  display: inline-block;
-  background-color: #fff;
-  color: #e44d26;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 5px;
+/* =========   Alert ===============*/
+#alert {
+  z-index: 200; /* luôn trên cùng (đè lên những thứ khác) */
+  display: block;
+  position: fixed;
+  bottom: 40px;
+  right: 5px;
+  padding: 20px;
+  background-color: #111;
+  opacity: 0;
+  color: white;
   font-weight: bold;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
 }
 
-/* Block: Product Grid */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+#closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
 }
 
-/* Block: Product Card */
-.product-card {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease;
-}
+/* ===== End clear float ====== */
 
-.product-card:hover {
-  transform: translateY(-5px);
-}
-
-.product-card__image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.product-card__info {
-  padding: 15px;
-}
-
-.product-card__name {
+#goto-top-page {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  z-index: 100;
+  background: rgba(0, 0, 0, .2);
+  color: #fff;
   font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition-duration: .2s;
+}
+#goto-top-page:hover {
+  background: rgba(0, 0, 0, .7);
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
 }
 
-.product-card__price {
-  font-size: 16px;
-  color: #e44d26;
-  font-weight: bold;
+/* ========= ScrollBar ============ */
+::-webkit-scrollbar {
+  width: .7em;
+  height: .7em;
 }
 
-.product-card__category {
-  font-size: 14px;
-  color: #777;
-  margin-top: 5px;
+::-webkit-scrollbar-track {
+  background: #eee;
 }
 
-.footer {
-  background-color: #333;
+::-webkit-scrollbar-thumb {
+  background: #999;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+/* ==================== css thêm , chưa sử dụng ========================= */
+/* tooltip https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_copy_clipboard2 */
+.tooltip {
+  position: absolute;
+  display: inline-block;
+  bottom: 5px;
+  right: 5px;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 140px;
+  background-color: #555;
   color: #fff;
   text-align: center;
-  padding: 10px 0;
+  border-radius: 6px;
+  padding: 5px;
   position: absolute;
-  bottom: 0;
-  width: 100%;
+  z-index: 21;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -75px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* animation ping from thegioididong */
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: #f33;
+  border-radius: 100%;
+  display: block;
+}
+
+.dot .ping {
+  border: 1px solid #f33;
+  width: 10px;
+  height: 10px;
+  opacity: 1;
+  background-color: rgba(238, 46, 36, .2);
+  border-radius: 100%;
+  -webkit-animation-duration: 1.25s;
+  animation-duration: 1.25s;
+  -webkit-animation-name: sonar;
+  animation-name: sonar;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  display: block;
+  margin: -1px 0 0 -1px;
+}
+
+@keyframes sonar {
+  0% {
+      opacity: 1;
+      -webkit-transform: scale(1);
+      transform: scale(1)
+  }
+
+  100% {
+      -webkit-transform: scale(3);
+      transform: scale(3);
+      opacity: 0
+  }
 }

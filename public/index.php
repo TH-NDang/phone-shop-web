@@ -5,6 +5,9 @@ require_once '../src/models/Product.php';
 $retries = 5;
 $retry_interval = 2; // seconds
 
+
+ob_start(); // Bắt đầu bộ đệm đầu ra
+
 while ($retries > 0) {
     try {
         $pdo = new PDO(
@@ -34,15 +37,18 @@ switch ($action) {
         $products = $productModel->getAll();
         include '../src/views/products.php';
         break;
-    case 'about':
-        // TODO: Create and include about page
-        echo '<div id="content" class="container"><h1>About Us</h1><p>About page content goes here.</p></div>';
+    case 'about_us':
+        include '../src/views/about_us.php';
+        break;
+    case 'warranty_center':
+        include '../src/views/warranty_center.php';
         break;
     case 'contact':
-        // TODO: Create and include contact page
-        echo '<div id="content" class="container"><h1>Contact Us</h1><p>Contact page content goes here.</p></div>';
+        include '../src/views/contact.php';
         break;
     default:
         echo '<div id="content" class="container"><h1>404 Not Found</h1><p>The page you are looking for does not exist.</p></div>';
         break;
 }
+$content = ob_get_clean(); // Lấy nội dung từ bộ đệm và xóa bộ đệm
+include '../src/views/base.php';

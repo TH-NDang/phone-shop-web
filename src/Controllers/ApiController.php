@@ -22,7 +22,13 @@ class ApiController
 
                 switch ($segments[1]) {
                     case 'products':
-                        $this->handleProducts($segments);
+                        if (isset($segments[2])) {
+                            if ($segments[2] === 'detail' && isset($segments[3])) {
+                                $this->handleProductDetail($segments[3]);
+                            } else {
+                                $this->handleProducts($segments);
+                            }
+                        }
                         break;
 
                     case 'brands':
@@ -91,5 +97,16 @@ class ApiController
         http_response_code($statusCode);
         echo json_encode($data);
         exit();
+    }
+
+    private function handleProductDetail($productId)
+    {
+        $result = $this->product->getProductById($productId);
+
+        if ($result['status'] === 'success') {
+            $this->sendResponse(200, $result);
+        } else {
+            $this->sendResponse(404, $result);
+        }
     }
 }

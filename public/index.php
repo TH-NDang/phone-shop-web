@@ -8,11 +8,22 @@ try {
 
     // Regular page routing
     $action = isset($_GET['action']) ? $_GET['action'] : 'home';
+    $productId = isset($_GET['id']) ? $_GET['id'] : null;
 
     ob_start();
     switch ($action) {
         case 'home':
             include ROOT_DIR . '/src/Views/home.php';
+            break;
+        case 'product-detail':
+            if ($productId) {
+                $productModel = new Product();
+                $result = $productModel->getProductById($productId);
+                $product = $result['data'];
+                include ROOT_DIR . '/src/Views/product_detail.php';
+            } else {
+                header('Location: /');
+            }
             break;
         case 'about_us':
             include ROOT_DIR . '/src/Views/about_us.php';

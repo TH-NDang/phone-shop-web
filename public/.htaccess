@@ -1,5 +1,8 @@
 RewriteEngine On
 
+# Rewrite for product detail
+RewriteRule ^product-detail/([0-9]+)/?$ index.php?action=product-detail&id=$1 [L,QSA]
+
 # Rewrite rule to handle URLs without "index.php?action="
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

@@ -51,7 +51,6 @@ ob_start();
             <p style="font-size: 22px; color: gray">Gửi thông tin liên lạc cho chúng tôi: </p>
             <hr />
             <form name="formlh" method="post">
-                {% csrf_token %}
                 <table cellspacing="10px">
                     <tr>
                         <td>Họ và tên</td>
@@ -87,12 +86,6 @@ ob_start();
         </div>
 
     </div>
-{% load static %}
-    {% if success_message %}
-    <script>
-        alert('{{ success_message }}');
-    </script>
-{% endif %}
 </div>
  <!-- thêm footer -->
 <?php include 'footer.php'; ?>

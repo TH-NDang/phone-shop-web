@@ -18,14 +18,14 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: phone_shop_web
+      MYSQL_DATABASE: phone_shop
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-        - "${MYSQL_PORT}:3306"
+      - "${MYSQL_PORT}:3306"
     volumes:
-      - ./my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf:ro  # Đảm bảo tệp này có quyền 644 và chỉ đọc
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro  # Đảm bảo tệp này chỉ đọc
       - phone-shop-web-data:/var/lib/mysql
 
   phpmyadmin:

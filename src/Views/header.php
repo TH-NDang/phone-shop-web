@@ -2,7 +2,7 @@
     <div class="header group">
         <div class="logo">
             <a href="/">
-                <img src="assets/store/logo.jpg" alt="Trang chủ Smartphone Store"
+                <img src="/assets/store/logo.jpg" alt="Trang chủ Smartphone Store"
                     title="Trang chủ Smartphone Store">
             </a>
         </div> <!-- End Logo -->
@@ -26,18 +26,18 @@
                         document.getElementById('search-button').addEventListener('click', function (event) {
                             event.preventDefault();
                             const keyword = document.getElementById('search-box').value;
-                            window.location.href = "{% url 'search' %}?keyword=" + encodeURIComponent(keyword);
+                            window.location.href = "/search?keyword=" + encodeURIComponent(keyword);
                         });
                     </script>
 
                 </form> <!-- End Form search -->
                 <div class="tags">
                     <strong>Từ khóa: </strong>
-                    <a href="{% url 'search' %}?keyword=Samsung">Samsung</a>
-                    <a href="{% url 'search' %}?keyword=Iphone">iPhone</a>
-                    <a href="{% url 'search' %}?keyword=Vivo" >Vivo</a>
-                    <a href="{% url 'search' %}?keyword=Oppo" >Oppo</a>
-                    <a href="{% url 'search' %}?keyword=Masstel" >Masstel</a>
+                    <a href="/search?keyword=Samsung">Samsung</a>
+                    <a href="/search?keyword=Iphone">iPhone</a>
+                    <a href="/search?keyword=Vivo" >Vivo</a>
+                    <a href="/search?keyword=Oppo" >Oppo</a>
+                    <a href="/search?keyword=Masstel" >Masstel</a>
                 </div>
             </div> <!-- End Search header -->
             <div class="tools-member" >

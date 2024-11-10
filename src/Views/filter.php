@@ -82,35 +82,36 @@
         console.log(queryString);
         FilterProducts(queryString)
     });
-    // Định nghĩa hàm myFunction
-    async function FilterProducts(keyword) {
-    const response = await fetch('/products'+ keyword)
-    .then(response => {
+// Định nghĩa hàm FilterProducts
+async function FilterProducts(queryString) {
+    try {
+        const response = await fetch('/api/filter' + queryString);
+        // in ra url
+        console.log('/api/filter' + queryString);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json();
-    })
-    .then(products => {
+        const text = await response.text();
+        console.log('Server response:', text); // Ghi lại phản hồi từ máy chủ
+        const result = JSON.parse(text);
+
         const productsContainer = document.getElementById('products');
         productsContainer.innerHTML = '';
-        if(products.error === 'NoMoreProduct'){
-            document.getElementById('loadMore').style.display = 'none';
-        }
-        else if(products.length == 0){
+        if (result.status === 'error') {
+            console.error('API Error:', result.message);
+            alert('Có lỗi khi tải sản phẩm: ' + result.message);
+        } else if (result.data.length == 0) {
             productsContainer.innerHTML = `
             <p style="font-size: 20px; color: red; font-weight: bold; text-align: center;">
               Không có sản phẩm nào! <span style="color: blue;"><a href="/">Quay lại trang chủ</a></span>
             </p>
             `;
-        }
-        else{
-        // Xóa nội dung hiện tại của productContainer
-        
-        products.forEach(product => {
-            const productElement = document.createElement('li');
-            productElement.className = 'sanPham';
-            productElement.innerHTML = `
+        } else {
+            // Hiển thị các sản phẩm
+            result.data.forEach(product => {
+                const productElement = document.createElement('li');
+                productElement.className = 'sanPham';
+                productElement.innerHTML = `
                     <a href="/product-detail/${product.name}">
                     <img src="${product.image}" alt="">
                     <h3>${product.name}</h3>
@@ -130,13 +131,13 @@
                         </button>
                     </div>
                 </a>
-            `;
-            productsContainer.appendChild(productElement);
-        });
-        
+                `;
+                productsContainer.appendChild(productElement);
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
     }
-    })
-    .catch(error => console.error('Error:', error));
     document.getElementById('loadMore').style.display = 'none';
 }
 </script>

@@ -164,4 +164,77 @@ class Product
             ];
         }
     }
+
+    public function searchByName($keyword)
+    {
+        try {
+            // Chuẩn bị câu truy vấn
+            $sql = "SELECT * FROM product WHERE name LIKE ?";
+            $stmt = $this->db->query($sql, ['%' . $keyword . '%']);
+
+            // Lấy kết quả
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                'status' => 'success',
+                'products' => $results
+            ];
+        } catch (PDOException $e) {
+            error_log("Error in searchByName: " . $e->getMessage());
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
+    public function filterProducts($priceRange, $sortOrder, $ram, $rom)
+    {
+        try {
+            $sql = "SELECT * FROM product WHERE 1=1";
+            error_log("Filter Parameters - Price Range: $priceRange, Sort Order: $sortOrder, RAM: $ram, ROM: $rom");
+            // Lọc theo giá tiền
+            if (!empty($priceRange)) {
+                list($minPrice, $maxPrice) = explode('-', $priceRange);
+                $sql .= " AND price BETWEEN $minPrice AND $maxPrice";
+            }
+
+            // Sắp xếp theo giá
+            if (!empty($sortOrder)) {
+                if ($sortOrder == 'asc') {
+                    $sql .= " ORDER BY price ASC";
+                } elseif ($sortOrder == 'desc') {
+                    $sql .= " ORDER BY price DESC";
+                }
+            }
+
+            // Lọc theo RAM
+            if (!empty($ram)) {
+                $sql .= " AND ram = $ram";
+            }
+
+            // Lọc theo ROM
+            if (!empty($rom)) {
+                $sql .= " AND rom = $rom";
+            }
+
+            // Ghi câu lệnh truy vấn vào log
+            error_log("SQL Query: " . $sql);
+            $stmt = $this->db->query($sql);
+            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                'status' => 'success',
+                'data' => $products
+            ];
+        } catch (Exception $e) {
+            error_log("Error in filterProducts: " . $e->getMessage());
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'data' => []
+            ];
+        }
+    }
 }
+

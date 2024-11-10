@@ -58,21 +58,32 @@
                 `;
             }
 
-            // Function to display products by brand
+                // Function to display products by brand
             async function displayProducts(brandName) {
                 try {
+                    // Thực hiện yêu cầu API để tìm kiếm sản phẩm theo thương hiệu
                     const response = await fetch(`/api/search?brand=${encodeURIComponent(brandName)}`);
+                    
+                    // Kiểm tra phản hồi từ máy chủ
                     if (!response.ok) throw new Error('Network response was not ok');
-
+            
+                    // Chuyển đổi phản hồi từ máy chủ sang định dạng JSON
                     const result = await response.json();
+                    
+                    // Ghi lại phản hồi từ máy chủ trong console
+                    console.log('Server response:', result);
+            
+                    // Lấy danh sách sản phẩm từ phản hồi
                     const products = result.data || [];
-
+            
+                    // Lấy phần tử HTML để hiển thị sản phẩm
                     const productsContainer = document.getElementById('products');
                     productsContainer.innerHTML = '';
-
-                    // Hide load more button when filtering by brand
+            
+                    // Ẩn nút "Load More" khi lọc theo thương hiệu
                     document.getElementById('loadMore').style.display = 'none';
-
+            
+                    // Hiển thị thông báo nếu không có sản phẩm
                     if (products.length === 0) {
                         productsContainer.innerHTML = `
                             <p style="font-size: 20px; color: red; font-weight: bold; text-align: center;">
@@ -81,13 +92,14 @@
                         `;
                         return;
                     }
-
-                    // Display filtered products
+            
+                    // Hiển thị các sản phẩm
                     products.forEach(product => {
                         productsContainer.innerHTML += createProductHTML(product);
                     });
-
+            
                 } catch (error) {
+                    // Ghi lại lỗi trong console
                     console.error('Error:', error);
                     alert('Có lỗi xảy ra khi tải sản phẩm!');
                 }

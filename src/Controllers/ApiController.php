@@ -38,6 +38,9 @@ class ApiController
                     case 'search':
                         $this->handleSearch();
                         break;
+                    case 'filter':
+                        $this->handleFilter();
+                        break;
 
                     default:
                         $this->sendResponse(404, [
@@ -80,7 +83,10 @@ class ApiController
 
     private function handleSearch()
     {
-        if (isset($_GET['brand'])) {
+        if (isset($_GET['keyword'])) {
+            $result = $this->product->searchByName($_GET['keyword']);
+            $this->sendResponse(200, $result);
+        } elseif (isset($_GET['brand'])) {
             $result = $this->product->getProductsByBrand($_GET['brand']);
             $this->sendResponse(200, $result);
         } else {
@@ -108,5 +114,29 @@ class ApiController
         } else {
             $this->sendResponse(404, $result);
         }
+    }
+
+    private function handleProductsByBrand($brandName)
+    {
+        $result = $this->product->getProductsByBrand($brandName);
+        if ($result['status'] === 'success') {
+            $this->sendResponse(200, $result);
+        } else {
+            $this->sendResponse(404, $result);
+        }
+    }   
+
+    private function handleFilter()
+    {
+        $priceRange = isset($_GET['data-price']) ? $_GET['data-price'] : '';
+        $sortOrder = isset($_GET['sort-filter']) ? $_GET['sort-filter'] : '';
+        $ram = isset($_GET['ram-filter']) ? $_GET['ram-filter'] : '';
+        $rom = isset($_GET['rom-filter']) ? $_GET['rom-filter'] : '';
+    
+        // Ghi các tham số vào log để kiểm tra
+        error_log("Received Filter Parameters - Price Range: $priceRange, Sort Order: $sortOrder, RAM: $ram, ROM: $rom");
+    
+        $result = $this->product->filterProducts($priceRange, $sortOrder, $ram, $rom);
+        $this->sendResponse(200, $result);
     }
 }

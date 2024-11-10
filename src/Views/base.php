@@ -22,24 +22,24 @@
 
     <!-- our files -->
     <!-- css -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/topnav.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/banner.css">
-    <link rel="stylesheet" href="css/taikhoan.css">
-    <link rel="stylesheet" href="css/trangchu.css">
-    <link rel="stylesheet" href="css/home_products.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/baohanh.css">
-    <link rel="stylesheet" href="css/lienhe.css">
-    <link rel="stylesheet" href="css/chitietsanpham.css">
-    <link rel="stylesheet" href="css/gioHang.css">
-    <link rel="stylesheet" href="css/nguoidung.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/topnav.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/banner.css">
+    <link rel="stylesheet" href="/css/taikhoan.css">
+    <link rel="stylesheet" href="/css/trangchu.css">
+    <link rel="stylesheet" href="/css/home_products.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/baohanh.css">
+    <link rel="stylesheet" href="/css/lienhe.css">
+    <link rel="stylesheet" href="/css/chitietsanpham.css" type="text/css">
+    <link rel="stylesheet" href="/css/gioHang.css">
+    <link rel="stylesheet" href="/css/nguoidung.css">
     <!-- js -->
-    <script src="assets/js/getProduct.js"></script>
-    <script src="assets/js/search.js"></script>
-    <script src="assets/js/account.js"></script>
-    <script src="assets/js/cart.js"></script>
+    <script src="/assets/js/getProduct.js"></script>
+    <script src="/assets/js/search.js"></script>
+    <script src="/assets/js/account.js"></script>
+    <script src="/assets/js/cart.js"></script>
 </head>
 
 <body>

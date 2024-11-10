@@ -34,6 +34,9 @@ try {
         case 'contact':
             include ROOT_DIR . '/src/Views/contact.php';
             break;
+        case 'search':
+            include ROOT_DIR . '/src/Views/search.php';
+            break;
         default:
             echo '<div id="content" class="container">
                     <h1>404 Not Found</h1>

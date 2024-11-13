@@ -12,7 +12,7 @@ ob_start();
     <div class="container" style="min-height: 85vh; padding: 20px;">
         <h1 style="margin-bottom: 20px;">Giỏ hàng của bạn</h1>
 
-        <table id="cart-items" class="w-full" style="width: 100%; border-collapse: collapse;">
+        <table class="w-full" style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr style="background-color: #f8f9fa;">
                     <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Sản phẩm</th>
@@ -22,7 +22,7 @@ ob_start();
                     <th style="padding: 12px; text-align: center; border-bottom: 2px solid #dee2e6;">Thao tác</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="cart-items">
                 <!-- JavaScript sẽ render sản phẩm vào đây -->
             </tbody>
         </table>
@@ -65,8 +65,14 @@ ob_start();
         // Kiểm tra và hiển thị thông báo giỏ hàng trống
         const cart = CartManager.getCart();
         const emptyCartMessage = document.getElementById('empty-cart-message');
-        if (cart.length === 0 && emptyCartMessage) {
-            emptyCartMessage.style.display = 'block';
+        const cartTable = document.querySelector('table');
+
+        if (cart.length === 0) {
+            if (emptyCartMessage) emptyCartMessage.style.display = 'block';
+            if (cartTable) cartTable.style.display = 'none';
+        } else {
+            if (emptyCartMessage) emptyCartMessage.style.display = 'none';
+            if (cartTable) cartTable.style.display = 'table';
         }
     });
 </script>

@@ -99,45 +99,53 @@ const CartManager = {
       cartNumber.textContent = totalItems;
     }
 
-    const cartTable = document.getElementById("cart-items");
-    if (cartTable) {
-      cartTable.innerHTML = cart
-        .map(
-          (item) => `
-                <tr>
-                    <td>
-                      <img src="${item.image}" alt="${
-                        item.name
-                      }" style="width: 100px;">
-                      <p>${item.name}</p>
-                    </td>
-                    <td>
-                      ${new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(item.price)}
-                    </td>
-                    <td>
-                      <input type="number" value="${item.quantity}" min="1" 
-                          onchange="CartManager.updateQuantity(${
-                            item.product_id
-                          }, parseInt(this.value))">
-                    </td>
-                    <td>
-                      ${new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(item.price * item.quantity)}
-                    </td>
-                    <td>
-                        <button onclick="CartManager.removeFromCart(${
-                          item.product_id
-                        })">Xóa</button>
-                    </td>
-                </tr>
-            `
-        )
-        .join("");
+    const cartItems = document.getElementById("cart-items");
+    if (cartItems) {
+      if (cart.length === 0) {
+        const emptyCartMessage = document.getElementById("empty-cart-message");
+        const cartTable = cartItems.closest("table");
+        if (emptyCartMessage) emptyCartMessage.style.display = "block";
+        if (cartTable) cartTable.style.display = "none";
+      } else {
+        const emptyCartMessage = document.getElementById("empty-cart-message");
+        const cartTable = cartItems.closest("table");
+        if (emptyCartMessage) emptyCartMessage.style.display = "none";
+        if (cartTable) cartTable.style.display = "table";
+
+        cartItems.innerHTML = cart.map((item) => `
+          <tr>
+              <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">
+                  <div style="display: flex; align-items: center;">
+                      <img src="${item.image}" alt="${item.name}" style="width: 80px; margin-right: 15px;">
+                      <p style="margin: 0;">${item.name}</p>
+                  </div>
+              </td>
+              <td style="padding: 12px; text-align: right; border-bottom: 1px solid #dee2e6;">
+                  ${new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(item.price)}
+              </td>
+              <td style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6;">
+                  <input type="number" value="${item.quantity}" min="1" 
+                      style="width: 60px; padding: 5px; text-align: center;"
+                      onchange="CartManager.updateQuantity(${item.product_id}, parseInt(this.value))">
+              </td>
+              <td style="padding: 12px; text-align: right; border-bottom: 1px solid #dee2e6;">
+                  ${new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(item.price * item.quantity)}
+              </td>
+              <td style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6;">
+                  <button onclick="CartManager.removeFromCart(${item.product_id})"
+                      style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                      Xóa
+                  </button>
+              </td>
+          </tr>
+        `).join("");
+      }
 
       const totalElement = document.getElementById("cart-total");
       if (totalElement) {

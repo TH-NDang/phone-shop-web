@@ -25,6 +25,18 @@ try {
                 header('Location: /');
             }
             break;
+        case 'cart': // Thêm case cart và in ra lỗi nếu có
+            error_log("Loading cart page...");
+            if (file_exists(ROOT_DIR . '/src/Views/cart.php')) {
+                include ROOT_DIR . '/src/Views/cart.php';
+            } else {
+                error_log("Cart view file not found at: " . ROOT_DIR . '/src/Views/cart.php');
+                echo '<div id="content" class="container">
+                    <h1>Error</h1>
+                    <p>Cart page is currently unavailable.</p>
+                </div>';
+            }
+            break;
         case 'about_us':
             include ROOT_DIR . '/src/Views/about_us.php';
             break;

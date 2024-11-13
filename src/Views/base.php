@@ -39,10 +39,12 @@
     <script src="/assets/js/getProduct.js"></script>
     <script src="/assets/js/search.js"></script>
     <script src="/assets/js/account.js"></script>
-    <script src="/assets/js/cart.js"></script>
+    <!-- <script src="/assets/js/cart.js"></script> -->
+    <script src="/assets/js/cartTest.js"></script>
 </head>
 
 <body>
+    <div id="alert" style="display: none;"></div>
     <?php echo $content ?? ''; ?>
     <script src="assets/js/filter.js"></script>
 </body>

@@ -21,22 +21,13 @@
 
             // Function to create product HTML
             function createProductHTML(product) {
-                // Add checks for required fields
-                if (!product.name || !product.price || !product.image) {
-                    console.error('Missing required product fields:', product);
-                    return '';
-                }
-
                 return `
                     <li class="sanPham">
                         <a href="/product-detail/${product.product_id}">
-                            <img src="${product.image}" alt="${product.name}" onerror="this.src='/assets/store/products/default.jpg'">
+                            <img src="${product.image}" alt="${product.name}">
                             <h3>${product.name}</h3>
                             <div class="price">
-                                <strong>${new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND'
-                }).format(product.price)}</strong>
+                                <strong>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</strong>
                             </div>
                             <div class="ratingresult">
                                 <i class="fas fa-star"></i>
@@ -48,7 +39,7 @@
                             </div>
                             <label class="tragop">Trả góp 0%</label>
                             <div class="tooltip">
-                                <button class="themvaogio" onclick="themVaoGioHang(${product.product_id}); return false;">
+                                <button class="themvaogio" onclick="event.preventDefault(); themVaoGioHang(${product.product_id});">
                                     <span class="tooltiptext">Thêm vào giỏ</span>
                                     +
                                 </button>

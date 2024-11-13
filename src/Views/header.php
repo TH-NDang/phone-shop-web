@@ -168,15 +168,12 @@
 
 
                 <div class="cart">
-                    <a href="/cart/">
+                    <a href="index.php?action=cart">
                         <i class="fas fa-shopping-cart"></i>
                         <span>Giỏ hàng</span>
-                        <script>
-                            updateCartCount()
-                        </script>
-                        <span class="cart-number"></span>
+                        <span class="cart-number">0</span>
                     </a>
-                </div> <!-- End Cart -->
+                </div>
 
                 <!--<div class="check-order">
                         <a>

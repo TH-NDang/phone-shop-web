@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS phone_shop_web;
-USE phone_shop_web;
+CREATE DATABASE IF NOT EXISTS phone_shop;
+USE phone_shop;
 CREATE TABLE IF NOT EXISTS customers (
     customers_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,

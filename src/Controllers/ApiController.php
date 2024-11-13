@@ -408,38 +408,43 @@ class ApiController
                 return;
             }
 
-            // Bắt đầu transaction
             $this->db->getConnection()->beginTransaction();
 
-            // Xóa giỏ hàng cũ
-            $deleteSQL = "DELETE FROM cart WHERE customers_id = ?";
-            $this->db->query($deleteSQL, [$_SESSION['customer_id']]);
+            try {
+                $deleteSQL = "DELETE FROM cart WHERE customers_id = ?";
+                $this->db->query($deleteSQL, [$_SESSION['customer_id']]);
 
-            // Thêm các sản phẩm mới
-            $insertSQL = "INSERT INTO cart (customers_id, product_id, quantity, price) 
-                         VALUES (?, ?, ?, (SELECT price FROM product WHERE product_id = ?))";
+                if (!empty($data['cart'])) {
+                    $insertSQL = "INSERT INTO cart (customers_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+                    foreach ($data['cart'] as $item) {
+                        $priceSQL = "SELECT price FROM product WHERE product_id = ?";
+                        $priceStmt = $this->db->query($priceSQL, [$item['product_id']]);
+                        $productPrice = $priceStmt->fetchColumn();
 
-            foreach ($data['cart'] as $item) {
-                $this->db->query($insertSQL, [
-                    $_SESSION['customer_id'],
-                    $item['product_id'],
-                    $item['quantity'],
-                    $item['product_id']
+                        if ($productPrice !== false) {
+                            $this->db->query($insertSQL, [
+                                $_SESSION['customer_id'],
+                                $item['product_id'],
+                                $item['quantity'],
+                                $productPrice
+                            ]);
+                        }
+                    }
+                }
+
+                $this->db->getConnection()->commit();
+
+                $this->sendResponse(200, [
+                    'status' => 'success',
+                    'message' => 'Đồng bộ giỏ hàng thành công'
                 ]);
+
+            } catch (Exception $e) {
+                $this->db->getConnection()->rollBack();
+                throw $e;
             }
-
-            $this->db->getConnection()->commit();
-
-            $this->sendResponse(200, [
-                'status' => 'success',
-                'message' => 'Đồng bộ giỏ hàng thành công'
-            ]);
 
         } catch (Exception $e) {
-            if ($this->db->getConnection()->inTransaction()) {
-                $this->db->getConnection()->rollBack();
-            }
-
             error_log("Error in handleSyncCart: " . $e->getMessage());
             $this->sendResponse(500, [
                 'status' => 'error',

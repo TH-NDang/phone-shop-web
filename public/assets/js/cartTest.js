@@ -1,87 +1,98 @@
 const CartManager = {
-  // Key để lưu giỏ hàng trong localStorage
   CART_STORAGE_KEY: "shopping_cart",
+
+  isLoggedIn() {
+    return sessionStorage.getItem("user") !== null;
+  },
 
   initCart() {
     const cart = this.getCart();
     this.updateCartUI(cart);
   },
 
-  // Lấy giỏ hàng từ localStorage
   getCart() {
     const cartData = localStorage.getItem(this.CART_STORAGE_KEY);
     return cartData ? JSON.parse(cartData) : [];
   },
 
-  saveCart(cart) {
+  async saveCart(cart) {
     localStorage.setItem(this.CART_STORAGE_KEY, JSON.stringify(cart));
     this.updateCartUI(cart);
-  },
 
-  addToCart(productId) {
-    fetch(`/api/products/detail/${productId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+    // Nếu đã đăng nhập, đồng bộ với server
+    if (this.isLoggedIn()) {
+      try {
+        const response = await fetch("/api/cart/sync", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ cart: cart }),
+        });
+        const result = await response.json();
+        if (result.status !== "success") {
+          console.error("Lỗi đồng bộ giỏ hàng:", result.message);
         }
-        return response.json();
-      })
-      .then((result) => {
-        if (result.status === "success" && result.data) {
-          const product = result.data;
-          const cart = this.getCart();
-
-          const existingProduct = cart.find(
-            (item) => item.product_id === parseInt(productId)
-          );
-
-          if (existingProduct) {
-            existingProduct.quantity += 1;
-          } else {
-            cart.push({
-              product_id: parseInt(productId),
-              name: product.name,
-              price: parseFloat(product.price),
-              image: product.image,
-              quantity: 1,
-            });
-          }
-
-          this.saveCart(cart);
-          this.showNotification("Đã thêm sản phẩm vào giỏ hàng!");
-        } else {
-          throw new Error(result.message || "Không thể lấy thông tin sản phẩm");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        this.showNotification(
-          "Có lỗi xảy ra khi thêm sản phẩm: " + error.message,
-          "error"
-        );
-      });
-  },
-
-  updateQuantity(productId, newQuantity) {
-    const cart = this.getCart();
-    const product = cart.find((item) => item.product_id === productId);
-
-    if (product) {
-      if (newQuantity > 0) {
-        product.quantity = newQuantity;
-      } else {
-        const index = cart.indexOf(product);
-        cart.splice(index, 1);
+      } catch (error) {
+        console.error("Lỗi khi đồng bộ giỏ hàng:", error);
       }
-      this.saveCart(cart);
-      this.updateCartUI(cart);
     }
   },
 
-  removeFromCart(productId) {
+  async addToCart(productId) {
+    try {
+      const response = await fetch(`/api/products/detail/${productId}`);
+      if (!response.ok) throw new Error("Lỗi lấy thông tin sản phẩm");
+
+      const result = await response.json();
+      if (result.status === "success" && result.data) {
+        const product = result.data;
+        const cart = this.getCart();
+
+        const existingProduct = cart.find(
+          (item) => item.product_id === parseInt(productId)
+        );
+        if (existingProduct) {
+          existingProduct.quantity += 1;
+        } else {
+          cart.push({
+            product_id: parseInt(productId),
+            name: product.name,
+            price: parseFloat(product.price),
+            image: product.image,
+            quantity: 1,
+          });
+        }
+
+        await this.saveCart(cart);
+        this.showNotification("Đã thêm sản phẩm vào giỏ hàng!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      this.showNotification("Có lỗi xảy ra khi thêm sản phẩm!", "error");
+    }
+  },
+
+  async updateQuantity(productId, newQuantity) {
     const cart = this.getCart();
-    const updatedCart = cart.filter((item) => item.product_id !== productId);
-    this.saveCart(updatedCart);
+    const product = cart.find((item) => item.product_id === parseInt(productId));
+
+    if (product) {
+      if (newQuantity > 0) {
+        product.quantity = parseInt(newQuantity);
+        await this.saveCart(cart);
+      } else {
+        await this.removeFromCart(productId);
+      }
+    }
+  },
+
+  async removeFromCart(productId) {
+    const cart = this.getCart();
+    const updatedCart = cart.filter(
+      (item) => item.product_id !== parseInt(productId)
+    );
+    await this.saveCart(updatedCart);
     this.showNotification("Đã xóa sản phẩm khỏi giỏ hàng!");
   },
 
@@ -103,57 +114,56 @@ const CartManager = {
     if (cartItems) {
       if (cart.length === 0) {
         const emptyCartMessage = document.getElementById("empty-cart-message");
-        const cartTable = cartItems.closest("table");
         if (emptyCartMessage) emptyCartMessage.style.display = "block";
-        if (cartTable) cartTable.style.display = "none";
+        cartItems.closest("table").style.display = "none";
       } else {
-        const emptyCartMessage = document.getElementById("empty-cart-message");
-        const cartTable = cartItems.closest("table");
-        if (emptyCartMessage) emptyCartMessage.style.display = "none";
-        if (cartTable) cartTable.style.display = "table";
+        cartItems.innerHTML = cart
+          .map(
+            (item) => `
+                    <tr>
+                        <td>
+                            <img src="${item.image}" alt="${
+              item.name
+            }" style="width: 100px;">
+                            <p>${item.name}</p>
+                        </td>
+                        <td>${new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(item.price)}</td>
+                        <td>
+                            <input type="number" value="${
+                              item.quantity
+                            }" min="1" 
+                                onchange="CartManager.updateQuantity(${
+                                  item.product_id
+                                }, this.value)">
+                        </td>
+                        <td>${new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(item.price * item.quantity)}</td>
+                        <td>
+                            <button onclick="CartManager.removeFromCart(${
+                              item.product_id
+                            })" 
+                                    style="color: white; background-color: #dc3545; border: none; padding: 5px 10px; border-radius: 3px;">
+                                Xóa
+                            </button>
+                        </td>
+                    </tr>
+                `
+          )
+          .join("");
 
-        cartItems.innerHTML = cart.map((item) => `
-          <tr>
-              <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">
-                  <div style="display: flex; align-items: center;">
-                      <img src="${item.image}" alt="${item.name}" style="width: 80px; margin-right: 15px;">
-                      <p style="margin: 0;">${item.name}</p>
-                  </div>
-              </td>
-              <td style="padding: 12px; text-align: right; border-bottom: 1px solid #dee2e6;">
-                  ${new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(item.price)}
-              </td>
-              <td style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6;">
-                  <input type="number" value="${item.quantity}" min="1" 
-                      style="width: 60px; padding: 5px; text-align: center;"
-                      onchange="CartManager.updateQuantity(${item.product_id}, parseInt(this.value))">
-              </td>
-              <td style="padding: 12px; text-align: right; border-bottom: 1px solid #dee2e6;">
-                  ${new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(item.price * item.quantity)}
-              </td>
-              <td style="padding: 12px; text-align: center; border-bottom: 1px solid #dee2e6;">
-                  <button onclick="CartManager.removeFromCart(${item.product_id})"
-                      style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
-                      Xóa
-                  </button>
-              </td>
-          </tr>
-        `).join("");
-      }
-
-      const totalElement = document.getElementById("cart-total");
-      if (totalElement) {
-        const total = this.calculateTotal(cart);
-        totalElement.textContent = new Intl.NumberFormat("vi-VN", {
-          style: "currency",
-          currency: "VND",
-        }).format(total);
+        const totalElement = document.getElementById("cart-total");
+        if (totalElement) {
+          const total = this.calculateTotal(cart);
+          totalElement.textContent = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(total);
+        }
       }
     }
   },
@@ -165,11 +175,9 @@ const CartManager = {
       alert.style.backgroundColor = type === "success" ? "#4CAF50" : "#f44336";
       alert.style.display = "block";
       alert.style.opacity = "1";
-      alert.style.transform = "translateY(0)";
 
       setTimeout(() => {
         alert.style.opacity = "0";
-        alert.style.transform = "translateY(20px)";
         setTimeout(() => {
           alert.style.display = "none";
         }, 300);

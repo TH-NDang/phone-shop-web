@@ -11,6 +11,7 @@
     <link rel="icon" href="path/to/your/favicon.ico" />
     <!-- Load font awesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <!-- owl carousel libraries -->
     <link rel="stylesheet" href="assets/js/owlcarousel/owl.carousel.min.css">
@@ -38,9 +39,10 @@
     <!-- js -->
     <script src="/assets/js/getProduct.js"></script>
     <script src="/assets/js/search.js"></script>
-    <script src="/assets/js/account.js"></script>
+    <!-- <script src="/assets/js/account.js"></script> -->
     <!-- <script src="/assets/js/cart.js"></script> -->
     <script src="/assets/js/cartTest.js"></script>
+    <script src="/assets/js/auth.js"></script>
 </head>
 
 <body>

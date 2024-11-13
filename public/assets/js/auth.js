@@ -41,7 +41,6 @@ $(document).ready(function () {
     e.stopPropagation();
   });
 
-  // Xử lý form đăng nhập
   $("#loginForm").on("submit", function (e) {
     e.preventDefault();
     const formData = {
@@ -56,10 +55,12 @@ $(document).ready(function () {
       data: JSON.stringify(formData),
       success: function (response) {
         if (response.status === "success") {
+          sessionStorage.setItem("user", JSON.stringify(response.data));
+
           showNotification("Đăng nhập thành công!", "success");
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          updateUserUI(response.data);
+          closeLoginForm();
+          syncCartAfterLogin();
         } else {
           showNotification(response.message || "Đăng nhập thất bại!", "error");
         }
@@ -70,7 +71,11 @@ $(document).ready(function () {
     });
   });
 
-  // Xử lý form đăng ký
+  $(document).on("click", ".logout-btn", function (e) {
+    e.preventDefault();
+    handleLogout();
+  });
+
   $("#signupForm").on("submit", function (e) {
     e.preventDefault();
     const formData = {
@@ -99,30 +104,6 @@ $(document).ready(function () {
       },
       error: function (xhr) {
         showNotification("Có lỗi xảy ra khi đăng ký!", "error");
-      },
-    });
-  });
-
-  // Xử lý đăng xuất
-  $(".logout-btn").on("click", function (e) {
-    e.preventDefault();
-    if (!confirm("Bạn có chắc muốn đăng xuất?")) return;
-
-    $.ajax({
-      url: "/api/auth/logout",
-      type: "POST",
-      success: function (response) {
-        if (response.status === "success") {
-          // Xóa giỏ hàng trong localStorage
-          localStorage.removeItem("shopping_cart");
-          showNotification("Đăng xuất thành công!", "success");
-          setTimeout(() => {
-            window.location.href = "/";
-          }, 1000);
-        }
-      },
-      error: function () {
-        showNotification("Có lỗi xảy ra khi đăng xuất!", "error");
       },
     });
   });
@@ -161,4 +142,130 @@ function showNotification(message, type = "success") {
 
 function checkLogin() {
   showLoginForm();
+}
+
+function checkLoginStatus() {
+  $.ajax({
+    url: "/api/auth/status",
+    type: "GET",
+    success: function (response) {
+      if (response.status === "success" && response.data) {
+        updateUserUI(response.data);
+      }
+    },
+    error: function () {
+      sessionStorage.removeItem("user");
+    },
+  });
+}
+
+function handleLogout() {
+  if (!confirm("Bạn có chắc muốn đăng xuất?")) return;
+
+  $.ajax({
+    url: "/api/auth/logout",
+    type: "POST",
+    success: function (response) {
+      if (response.status === "success") {
+        sessionStorage.removeItem("user");
+
+        localStorage.removeItem("shopping_cart");
+        showNotification("Đăng xuất thành công!", "success");
+        const defaultMemberHtml = `
+                    <div class="member">
+                        <a href="javascript:void(0);" onclick="checkLogin()">
+                            <i class="fas fa-user"></i>
+                            Tài khoản
+                        </a>
+                    </div>
+                `;
+        $(".tools-member .member").replaceWith(defaultMemberHtml);
+
+        $(".cart-number").text("0");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
+      }
+    },
+    error: function () {
+      showNotification("Có lỗi xảy ra khi đăng xuất!", "error");
+    },
+  });
+}
+
+function updateUserUI(userData) {
+  const memberHtml = `
+        <div class="member">
+            <a href="javascript:void(0);">
+                <i class="fas fa-user"></i>
+                ${userData.username || userData.email}
+            </a>
+            <div class="menuMember">
+                <a href="index.php?action=profile">Trang cá nhân</a>
+                <a href="javascript:void(0)" class="logout-btn">Đăng xuất</a>
+            </div>
+        </div>
+    `;
+
+  $(".tools-member .member").replaceWith(memberHtml);
+}
+
+function syncCartAfterLogin() {
+  // Lấy giỏ hàng từ localStorage
+  const localCart = JSON.parse(localStorage.getItem("shopping_cart") || "[]");
+
+  // Lấy giỏ hàng từ server
+  $.ajax({
+    url: "/api/cart/get",
+    type: "GET",
+    success: function (response) {
+      if (response.status === "success") {
+        const serverCart = response.data || [];
+
+        // Merge giỏ hàng local với server
+        const mergedCart = mergeCart(localCart, serverCart);
+
+        // Cập nhật giỏ hàng đã merge lên server
+        $.ajax({
+          url: "/api/cart/sync",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ cart: mergedCart }),
+          success: function (syncResponse) {
+            if (syncResponse.status === "success") {
+              // Cập nhật localStorage với giỏ hàng đã merge
+              localStorage.setItem("shopping_cart", JSON.stringify(mergedCart));
+
+              // Cập nhật UI giỏ hàng
+              updateCartNumber(mergedCart);
+            }
+          },
+        });
+      }
+    },
+  });
+}
+
+function mergeCart(localCart, serverCart) {
+  const mergedCart = [...serverCart];
+
+  localCart.forEach((localItem) => {
+    const serverItem = mergedCart.find(
+      (item) => item.product_id === localItem.product_id
+    );
+    if (serverItem) {
+      // Nếu sản phẩm đã có trong giỏ hàng server, cộng số lượng
+      serverItem.quantity += localItem.quantity;
+    } else {
+      // Nếu chưa có, thêm mới
+      mergedCart.push(localItem);
+    }
+  });
+
+  return mergedCart;
+}
+
+function updateCartNumber(cart) {
+  const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  $(".cart-number").text(totalItems);
 }

@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../src/autoload.php';
 
 try {
@@ -67,3 +68,18 @@ try {
     }
     echo json_encode(["error" => "Internal Server Error"]);
 }
+
+
+function checkSessionTimeout()
+{
+    $timeout = 3600;
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
+        session_unset();
+        session_destroy();
+        return false;
+    }
+    $_SESSION['last_activity'] = time();
+    return true;
+}
+
+checkSessionTimeout();

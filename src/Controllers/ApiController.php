@@ -3,11 +3,13 @@ require_once __DIR__ . '/../Models/Product.php';
 
 class ApiController
 {
+    private $db;
     private $product;
     private $customer;
 
     public function __construct()
     {
+        $this->db = Database::getInstance();
         $this->customer = new Customer();
         $this->product = new Product();
     }
@@ -57,6 +59,22 @@ class ApiController
                                 break;
                             default:
                                 $this->sendResponse(404, ['status' => 'error', 'message' => 'Route không tồn tại']);
+                                break;
+                        }
+                        break;
+                    case 'cart':
+                        switch ($segments[2] ?? '') {
+                            case 'get':
+                                $this->handleGetCart();
+                                break;
+                            case 'sync':
+                                $this->handleSyncCart();
+                                break;
+                            default:
+                                $this->sendResponse(404, [
+                                    'status' => 'error',
+                                    'message' => 'Route không tồn tại'
+                                ]);
                                 break;
                         }
                         break;
@@ -299,4 +317,136 @@ class ApiController
             $result
         );
     }
+
+    private function handleAuthStatus()
+    {
+        if (isset($_SESSION['customer_id'])) {
+            // Lấy thông tin user từ database
+            try {
+                $sql = "SELECT customers_id, username, email, first_name, last_name 
+                   FROM customers WHERE customers_id = ?";
+                $stmt = $this->db->query($sql, [$_SESSION['customer_id']]);
+                $user = $stmt->fetch();
+
+                if ($user) {
+                    $this->sendResponse(200, [
+                        'status' => 'success',
+                        'data' => $user
+                    ]);
+                    return;
+                }
+            } catch (Exception $e) {
+                error_log("Error in handleAuthStatus: " . $e->getMessage());
+            }
+        }
+
+        $this->sendResponse(200, [
+            'status' => 'error',
+            'message' => 'Chưa đăng nhập'
+        ]);
+    }
+
+    private function handleGetCart()
+    {
+        if (!isset($_SESSION['customer_id'])) {
+            $this->sendResponse(401, [
+                'status' => 'error',
+                'message' => 'Chưa đăng nhập'
+            ]);
+            return;
+        }
+
+        try {
+            $sql = "SELECT c.*, p.name, p.price, p.image 
+                   FROM cart c 
+                   JOIN product p ON c.product_id = p.product_id 
+                   WHERE c.customers_id = ?";
+
+            $stmt = $this->db->query($sql, [$_SESSION['customer_id']]);
+            $cartItems = $stmt->fetchAll();
+
+            $formattedItems = array_map(function ($item) {
+                return [
+                    'product_id' => (int) $item['product_id'],
+                    'name' => $item['name'],
+                    'price' => (float) $item['price'],
+                    'quantity' => (int) $item['quantity'],
+                    'image' => $item['image']
+                ];
+            }, $cartItems);
+
+            $this->sendResponse(200, [
+                'status' => 'success',
+                'data' => $formattedItems
+            ]);
+        } catch (Exception $e) {
+            error_log("Error in handleGetCart: " . $e->getMessage());
+            $this->sendResponse(500, [
+                'status' => 'error',
+                'message' => 'Lỗi khi lấy giỏ hàng'
+            ]);
+        }
+    }
+
+    private function handleSyncCart()
+    {
+        if (!isset($_SESSION['customer_id'])) {
+            $this->sendResponse(401, [
+                'status' => 'error',
+                'message' => 'Chưa đăng nhập'
+            ]);
+            return;
+        }
+
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+            if (!isset($data['cart']) || !is_array($data['cart'])) {
+                $this->sendResponse(400, [
+                    'status' => 'error',
+                    'message' => 'Dữ liệu giỏ hàng không hợp lệ'
+                ]);
+                return;
+            }
+
+            // Bắt đầu transaction
+            $this->db->getConnection()->beginTransaction();
+
+            // Xóa giỏ hàng cũ
+            $deleteSQL = "DELETE FROM cart WHERE customers_id = ?";
+            $this->db->query($deleteSQL, [$_SESSION['customer_id']]);
+
+            // Thêm các sản phẩm mới
+            $insertSQL = "INSERT INTO cart (customers_id, product_id, quantity, price) 
+                         VALUES (?, ?, ?, (SELECT price FROM product WHERE product_id = ?))";
+
+            foreach ($data['cart'] as $item) {
+                $this->db->query($insertSQL, [
+                    $_SESSION['customer_id'],
+                    $item['product_id'],
+                    $item['quantity'],
+                    $item['product_id']
+                ]);
+            }
+
+            $this->db->getConnection()->commit();
+
+            $this->sendResponse(200, [
+                'status' => 'success',
+                'message' => 'Đồng bộ giỏ hàng thành công'
+            ]);
+
+        } catch (Exception $e) {
+            if ($this->db->getConnection()->inTransaction()) {
+                $this->db->getConnection()->rollBack();
+            }
+
+            error_log("Error in handleSyncCart: " . $e->getMessage());
+            $this->sendResponse(500, [
+                'status' => 'error',
+                'message' => 'Lỗi khi đồng bộ giỏ hàng'
+            ]);
+        }
+    }
+
+
 }

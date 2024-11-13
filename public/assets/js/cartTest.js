@@ -1,4 +1,3 @@
-
 const CartManager = {
   // Key để lưu giỏ hàng trong localStorage
   CART_STORAGE_KEY: "shopping_cart",
@@ -93,7 +92,10 @@ const CartManager = {
   updateCartUI(cart) {
     const cartNumber = document.querySelector(".cart-number");
     if (cartNumber) {
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const totalItems = cart.reduce(
+        (total, item) => total + parseInt(item.quantity),
+        0
+      );
       cartNumber.textContent = totalItems;
     }
 
@@ -104,25 +106,29 @@ const CartManager = {
           (item) => `
                 <tr>
                     <td>
-                        <img src="${item.image}" alt="${
-            item.name
-          }" style="width: 100px;">
-                        <p>${item.name}</p>
+                      <img src="${item.image}" alt="${
+                        item.name
+                      }" style="width: 100px;">
+                      <p>${item.name}</p>
                     </td>
-                    <td>${new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(item.price)}</td>
                     <td>
-                        <input type="number" value="${item.quantity}" min="1" 
-                            onchange="CartManager.updateQuantity(${
-                              item.product_id
-                            }, this.value)">
+                      ${new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(item.price)}
                     </td>
-                    <td>${new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(item.price * item.quantity)}</td>
+                    <td>
+                      <input type="number" value="${item.quantity}" min="1" 
+                          onchange="CartManager.updateQuantity(${
+                            item.product_id
+                          }, parseInt(this.value))">
+                    </td>
+                    <td>
+                      ${new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(item.price * item.quantity)}
+                    </td>
                     <td>
                         <button onclick="CartManager.removeFromCart(${
                           item.product_id
@@ -178,8 +184,11 @@ function themVaoGioHang(productId) {
 }
 
 function updateCartCount() {
-  const cart = CartManager.getCart();
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cart = this.getCart();
+  const totalItems = cart.reduce(
+    (total, item) => total + parseInt(item.quantity),
+    0
+  );
   const cartNumber = document.querySelector(".cart-number");
   if (cartNumber) {
     cartNumber.textContent = totalItems;

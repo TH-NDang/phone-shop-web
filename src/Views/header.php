@@ -168,7 +168,7 @@
 
 
                 <div class="cart">
-                    <a href="index.php?action=cart">
+                    <a href="/cart">
                         <i class="fas fa-shopping-cart"></i>
                         <span>Giỏ hàng</span>
                         <span class="cart-number">0</span>

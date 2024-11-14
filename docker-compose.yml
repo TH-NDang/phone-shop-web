@@ -26,7 +26,6 @@ services:
     volumes:
       - ./my.cnf:/etc/mysql/conf.d/my.cnf:ro  # Đảm bảo tệp này có quyền 644 và chỉ đọc
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro  # Đảm bảo tệp này chỉ đọc
-      - phone-shop-web-data:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -36,6 +35,3 @@ services:
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password
-
-volumes:
-  phone-shop-web-data:

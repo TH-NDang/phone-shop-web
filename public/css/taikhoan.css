@@ -15,11 +15,13 @@
 .taikhoan {
     background: rgba(19, 35, 47, 0.9); /* Màu nền tối */
     padding: 40px;
-    max-width: 600px;
-    width: 90%;
+    max-width: 90vw; /* Đảm bảo chiều rộng tối đa là 90% chiều rộng viewport */
+    width: 70%; /* Chiều rộng 100% của phần tử cha */
+    max-height: 80%; /* Đảm bảo chiều cao tối đa là 90% chiều cao viewport */
     border-radius: 8px;
     box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
     position: relative;
+    overflow: auto; /* Thêm thanh cuộn nếu nội dung vượt quá kích thước phần tử */
 }
 
 .taikhoan .close {

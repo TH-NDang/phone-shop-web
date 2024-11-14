@@ -50,6 +50,9 @@ try {
         case 'search':
             include ROOT_DIR . '/src/Views/search.php';
             break;
+        case 'profile': // Thêm case mới cho trang cá nhân
+            include ROOT_DIR . '/src/Views/profile.php';
+            break;
         default:
             echo '<div id="content" class="container">
                     <h1>404 Not Found</h1>

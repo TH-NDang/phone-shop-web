@@ -36,6 +36,9 @@ class ApiController
                             case 'logout':
                                 $this->handleLogout();
                                 break;
+                            case 'status': // Thêm case mới để kiểm tra trạng thái đăng nhập
+                                $this->handleAuthStatus();
+                                break;
                             default:
                                 $this->sendResponse(404, ['status' => 'error', 'message' => 'Route không tồn tại']);
                                 break;
@@ -324,13 +327,14 @@ class ApiController
             // Lấy thông tin user từ database
             try {
                 $sql = "SELECT customers_id, username, email, first_name, last_name 
-                   FROM customers WHERE customers_id = ?";
+                       FROM customers WHERE customers_id = ?";
                 $stmt = $this->db->query($sql, [$_SESSION['customer_id']]);
                 $user = $stmt->fetch();
-
+    
                 if ($user) {
                     $this->sendResponse(200, [
                         'status' => 'success',
+                        'login' => true,
                         'data' => $user
                     ]);
                     return;
@@ -339,9 +343,10 @@ class ApiController
                 error_log("Error in handleAuthStatus: " . $e->getMessage());
             }
         }
-
+    
         $this->sendResponse(200, [
             'status' => 'error',
+            'login' => false,
             'message' => 'Chưa đăng nhập'
         ]);
     }
@@ -452,6 +457,32 @@ class ApiController
             ]);
         }
     }
-
+    // private function handleAuthStatus()
+    // {
+    //     if (isset($_SESSION['customer_id'])) {
+    //         // Lấy thông tin user từ database
+    //         try {
+    //             $sql = "SELECT customers_id, username, email, first_name, last_name 
+    //                    FROM customers WHERE customers_id = ?";
+    //             $stmt = $this->db->query($sql, [$_SESSION['customer_id']]);
+    //             $user = $stmt->fetch();
+    
+    //             if ($user) {
+    //                 $this->sendResponse(200, [
+    //                     'status' => 'success',
+    //                     'data' => $user
+    //                 ]);
+    //                 return;
+    //             }
+    //         } catch (Exception $e) {
+    //             error_log("Error in handleAuthStatus: " . $e->getMessage());
+    //         }
+    //     }
+    
+    //     $this->sendResponse(200, [
+    //         'status' => 'error',
+    //         'message' => 'Chưa đăng nhập'
+    //     ]);
+    // }
 
 }

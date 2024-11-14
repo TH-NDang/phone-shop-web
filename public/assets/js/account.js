@@ -15,6 +15,8 @@ function checkLogin() {
             return res.json();
         })
         .then(data => {
+            console.log('Status:', data.status); // In ra trạng thái status của kết quả trả về
+
             if (data.login) {
                 var popup = document.getElementById('userOptionsPopup');
                 popup.classList.remove('hide');

@@ -201,7 +201,7 @@ function updateUserUI(userData) {
                 ${userData.username || userData.email}
             </a>
             <div class="menuMember">
-                <a href="index.php?action=profile">Trang cá nhân</a>
+                <a href="/profile">Trang cá nhân</a>
                 <a href="javascript:void(0)" class="logout-btn">Đăng xuất</a>
             </div>
         </div>

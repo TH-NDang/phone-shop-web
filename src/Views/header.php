@@ -71,81 +71,84 @@
                 </div>
             </div>
 
-            <!-- Form đăng nhập/đăng ký -->
-            <div class="containTaikhoan">
-                <div class="taikhoan">
-                    <span class="close">&times;</span>
+<!-- Kiểm tra xem người dùng đã đăng nhập hay chưa -->
+        <?php if (!isset($_SESSION['customer_id'])): ?>
+        <!-- Form đăng nhập/đăng ký -->
+        <div class="containTaikhoan">
+            <div class="taikhoan">
+                <span class="close">&times;</span>
 
-                    <ul class="tab-group">
-                        <li class="tab active"><a href="#login">Đăng nhập</a></li>
-                        <li class="tab"><a href="#signup">Đăng ký</a></li>
-                    </ul>
+                <ul class="tab-group">
+                    <li class="tab active"><a href="#login">Đăng nhập</a></li>
+                    <li class="tab"><a href="#signup">Đăng ký</a></li>
+                </ul>
 
-                    <div class="tab-content">
-                        <div id="login">
-                            <h1>Chào mừng trở lại!</h1>
-                            <form id="loginForm">
+                <div class="tab-content">
+                    <div id="login">
+                        <h1>Chào mừng trở lại!</h1>
+                        <form id="loginForm">
+                            <div class="field-wrap">
+                                <label>Email<span class="req">*</span></label>
+                                <input type="email" name="email" required />
+                            </div>
+
+                            <div class="field-wrap">
+                                <label>Mật khẩu<span class="req">*</span></label>
+                                <input type="password" name="password" required />
+                            </div>
+
+                            <p class="forgot"><a href="index.php?action=forgot_password">Quên mật khẩu?</a></p>
+
+                            <button type="submit" class="button button-block">Đăng nhập</button>
+                        </form>
+                    </div>
+
+                    <div id="signup">
+                        <h1>Đăng ký tài khoản</h1>
+                        <form id="signupForm">
+                            <div class="top-row">
                                 <div class="field-wrap">
-                                    <label>Email<span class="req">*</span></label>
-                                    <input type="email" name="email" required />
+                                    <label>Họ<span class="req">*</span></label>
+                                    <input type="text" name="first_name" required />
                                 </div>
-
                                 <div class="field-wrap">
-                                    <label>Mật khẩu<span class="req">*</span></label>
-                                    <input type="password" name="password" required />
+                                    <label>Tên<span class="req">*</span></label>
+                                    <input type="text" name="last_name" required />
                                 </div>
+                            </div>
 
-                                <p class="forgot"><a href="index.php?action=forgot_password">Quên mật khẩu?</a></p>
+                            <div class="field-wrap">
+                                <label>Tên đăng nhập<span class="req">*</span></label>
+                                <input type="text" name="username" required />
+                            </div>
 
-                                <button type="submit" class="button button-block">Đăng nhập</button>
-                            </form>
-                        </div>
+                            <div class="field-wrap">
+                                <label>Email<span class="req">*</span></label>
+                                <input type="email" name="email" required />
+                            </div>
 
-                        <div id="signup">
-                            <h1>Đăng ký tài khoản</h1>
-                            <form id="signupForm">
-                                <div class="top-row">
-                                    <div class="field-wrap">
-                                        <label>Họ<span class="req">*</span></label>
-                                        <input type="text" name="first_name" required />
-                                    </div>
-                                    <div class="field-wrap">
-                                        <label>Tên<span class="req">*</span></label>
-                                        <input type="text" name="last_name" required />
-                                    </div>
-                                </div>
+                            <div class="field-wrap">
+                                <label>Mật khẩu<span class="req">*</span></label>
+                                <input type="password" name="password" required />
+                            </div>
 
-                                <div class="field-wrap">
-                                    <label>Tên đăng nhập<span class="req">*</span></label>
-                                    <input type="text" name="username" required />
-                                </div>
+                            <div class="field-wrap">
+                                <label>Số điện thoại</label>
+                                <input type="tel" name="tel" pattern="[0-9]{10}" />
+                            </div>
 
-                                <div class="field-wrap">
-                                    <label>Email<span class="req">*</span></label>
-                                    <input type="email" name="email" required />
-                                </div>
+                            <div class="field-wrap">
+                                <label>Địa chỉ</label>
+                                <textarea name="address" rows="3"></textarea>
+                            </div>
 
-                                <div class="field-wrap">
-                                    <label>Mật khẩu<span class="req">*</span></label>
-                                    <input type="password" name="password" required />
-                                </div>
-
-                                <div class="field-wrap">
-                                    <label>Số điện thoại</label>
-                                    <input type="tel" name="tel" pattern="[0-9]{10}" />
-                                </div>
-
-                                <div class="field-wrap">
-                                    <label>Địa chỉ</label>
-                                    <textarea name="address" rows="3"></textarea>
-                                </div>
-
-                                <button type="submit" class="button button-block">Tạo tài khoản</button>
-                            </form>
-                        </div>
+                            <button type="submit" class="button button-block">Tạo tài khoản</button>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
+        <?php endif; ?>
 
             <div id="alert" style="display: none;"></div>
         </div><!-- End Tools Member -->

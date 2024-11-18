@@ -15,7 +15,7 @@ ob_start();
     <div class="lienhe-info">
         <div class="info-left">
             <p>
-                <h2 style="color: gray"> CHUYÊN ĐỀ THỰC TẾ 2 </h2><br />
+                <h2 style="color: gray">Lập trình web</h2><br />
                 <b>Địa chỉ:</b>
                 <br />
                 Cơ sở 1: Số 2, Đường D3, Phường 25, Quận Bình Thạnh, TP.HCM<br />
